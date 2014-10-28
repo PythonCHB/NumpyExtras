@@ -1,0 +1,43 @@
+NOTES:
+
+stuff to check/do:
+
+A bunch of "non standard" types are missing from my numpy build -- would they be there in a 64 bit build?
+
+
+#        self.assertRaises(NotImplementedError, Accumulator, (1,2,3), dtype=np.int96  )
+#        self.assertRaises(NotImplementedError, Accumulator, (1,2,3), dtype=np.int256  )
+#        self.assertRaises(NotImplementedError, Accumulator, (1,2,3), dtype=np.uint96  )
+#        self.assertRaises(NotImplementedError, Accumulator, (1,2,3), dtype=np.uint256  )
+#        self.assertRaises(NotImplementedError, Accumulator, (1,2,3), dtype=np.float256  )
+
+
+There are some numpy types in numpy.pxd that have:
+
+( I notice that there is a comment about that -- it needs an ifdef so it's
+only supported on systems that support those types -- no idea how I might do
+that!)
+
+
+    cdef enum NPY_TYPES:
+    ...
+        NPY_FLOAT128
+    ...
+
+but no *_t type defined:
+
+float16
+complex265
+
+or the typedef has been commented out:
+
+#ctypedef npy_int96      int96_t
+#ctypedef npy_int128     int128_t
+
+#ctypedef npy_uint96     uint96_t
+#ctypedef npy_uint128    uint128_t
+
+
+or no "*.t" type definition (Or have been commented out)
+#ctypedef npy_float80    float80_t
+#ctypedef npy_float128   float128_t
