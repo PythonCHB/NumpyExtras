@@ -3,7 +3,7 @@ NumpyExtras
 
 Same Add ons for numpy -- not very fully developed.
 
-PUttin git up here in case it's useful to someone.
+Puttin git up here in case it's useful to someone.
 
 Accumulator
 -----------
