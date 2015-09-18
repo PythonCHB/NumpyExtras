@@ -16,16 +16,18 @@ an arbitrary length, like:
 ...
 
 This can also be extended to support higher dimensional arrays, as long as
-only the first dimension is the "ragged" one.
+only the last dimension is the "ragged" one.
 
 Internally, the data is stored as an array of one less dimension, with indexes
-into the array to catch the "rows". 
+into the array to identify the "rows". 
 
 The array can be indexed by row.
 
 Operations can be done on the entire array just like any numpy array
   - this is one of the primary advantages of using a single numpy array 
     for the internal storage.
+  - Another advantage is that the data are all in a block that can be
+    passed off and manipulated in C or Cython  
   - operations that require slicing, specifying an axis, etc, are likely to
     fail
 """
@@ -102,6 +104,9 @@ class ragged_array:
         return rslt
     
     def __string_middle(self):
+        '''
+        helper function that generates a list of strings fr the rows in the array
+        '''
         middle = []
         if len(self._data_array) > np.get_printoptions()['threshold']:
             for row in self[:3]:
@@ -124,7 +129,7 @@ class ragged_array:
 
     def __repr__(self):
         """
-        present a nice string representation of the array
+        present a nice string representation of the array that is "evaluateable" 
         """
         msg = ['ragged_array([']
         middle = self.__string_middle()
