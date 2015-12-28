@@ -32,9 +32,7 @@ class Accumulator(object):
         :type length: integer
 
         note: a scalar accumulator doesn't really make sense, so you get a length-1 array instead.
-        """
-        print " in __init__:, object:", obj, dtype
-        
+        """        
         try:
             l = len(obj)
         except TypeError: # probably a scalar
