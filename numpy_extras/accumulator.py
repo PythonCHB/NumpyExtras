@@ -12,17 +12,42 @@ This is so that the buffer can be re-allocated without messing up any views.
 """
 import numpy as np
 
-class Accumulator:
+class Accumulator(object):
     #A few parameters
     DEFAULT_BUFFER_SIZE = 128
     BUFFER_EXTEND_SIZE = 1.25 # array.array uses 1+1/16 -- that seems small to me.
-    def __init__(self, object=(), dtype=None, length=None):
+    def __init__(self, obj=(), dtype=None, length=None):
         """
-        proper docs here
-        
+        instantiate an accumulator:
+
+        :param obj=(): An object to make an accumulator from. should be a sequence.
+                       No object with create an empty Accumulator. It will build
+                       a sequence similarly to numpy.array
+
+        :param dytype=None: the dtype to use for the Accumulator. If None, it will
+                           be auto-determined from the data types in obj, defaulting
+                           to np.float64
+
+        :param length=None: initial length to make the internal buffer. Default is 128 elements.
+        :type length: integer
+
         note: a scalar accumulator doesn't really make sense, so you get a length-1 array instead.
         """
-        buffer = np.array(object, dtype=dtype, copy=True)
+        print " in __init__:, object:", obj, dtype
+        
+        try:
+            l = len(obj)
+        except TypeError: # probably a scalar
+            obj = (obj,) # wrap it in a tuple
+
+        if len(obj) == 0:
+            # create a length zero array
+            # with complex dtypes, the np.array() doesn't like empty tuples..
+            buffer = np.empty((0,), dtype=dtype)
+        else:
+            # create buffer from input object
+            buffer = np.array(obj, dtype=dtype, copy=True)
+
         if buffer.ndim > 1:
             raise ValueError("accumulator only works with 1-d data")
         buffer.shape = (-1) # to make sure we don't have a scalar
@@ -32,9 +57,6 @@ class Accumulator:
 
         self.__buffer = buffer
 
-    ##fixme: 
-    ## using @property seems to give a getter, but setting then overrides it
-    ## which seems terribly prone to error.
     @property
     def dtype(self):
         return self.__buffer.dtype
@@ -129,6 +151,7 @@ class Accumulator:
 
     def __str__(self):
         return self.__buffer[:self.length].__str__()
+
     def __repr__(self):
         return "Accumulator%s"%self.__buffer[:self.length].__repr__()[5:]
         
